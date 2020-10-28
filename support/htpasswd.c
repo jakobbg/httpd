@@ -212,7 +212,7 @@ static void check_args(int argc, const char *const argv[],
 
     if ((*mask) & (*mask - 1)) {
         /* not a power of two, i.e. more than one flag specified */
-        apr_file_printf(errfile, "%s: only one of -c -n -v -D may be specified" NL,
+        apr_file_printf(errfile, "%s: Only one of -c -n -v -D may be specified" NL,
             argv[0]);
         exit(ERR_SYNTAX);
     }
@@ -231,25 +231,25 @@ static void check_args(int argc, const char *const argv[],
 
     if (!(*mask & APHTP_NOFILE)) {
         if (strlen(argv[i]) > (APR_PATH_MAX - 1)) {
-            apr_file_printf(errfile, "%s: filename too long" NL, argv[0]);
+            apr_file_printf(errfile, "%s: Filename too long" NL, argv[0]);
             exit(ERR_OVERFLOW);
         }
         *pwfilename = apr_pstrdup(pool, argv[i++]);
     }
     if (strlen(argv[i]) > (MAX_STRING_LEN - 1)) {
-        apr_file_printf(errfile, "%s: username too long (> %d)" NL,
+        apr_file_printf(errfile, "%s: Username too long (> %d)" NL,
                         argv[0], MAX_STRING_LEN - 1);
         exit(ERR_OVERFLOW);
     }
     *user = apr_pstrdup(pool, argv[i++]);
     if ((arg = strchr(*user, ':')) != NULL) {
-        apr_file_printf(errfile, "%s: username contains illegal "
+        apr_file_printf(errfile, "%s: Username contains illegal "
                         "character '%c'" NL, argv[0], *arg);
         exit(ERR_BADUSER);
     }
     if (ctx->passwd_src == PW_ARG) {
         if (strlen(argv[i]) > (MAX_STRING_LEN - 1)) {
-            apr_file_printf(errfile, "%s: password too long (> %d)" NL,
+            apr_file_printf(errfile, "%s: Password too long (> %d)" NL,
                 argv[0], MAX_STRING_LEN);
             exit(ERR_OVERFLOW);
         }
@@ -268,7 +268,7 @@ static int verify(struct passwd_ctx *ctx, const char *hash)
     if (rv == APR_SUCCESS)
         return 0;
     if (APR_STATUS_IS_EMISMATCH(rv)) {
-        ctx->errstr = "password verification failed";
+        ctx->errstr = "Password verification failed";
         return ERR_PWMISMATCH;
     }
     ctx->errstr = apr_psprintf(ctx->pool, "Could not verify password: %pm",
@@ -338,7 +338,7 @@ int main(int argc, const char * const argv[])
              * Check that this existing file is readable and writable.
              */
             if (!accessible(pool, pwfilename, APR_FOPEN_READ|APR_FOPEN_WRITE)) {
-                apr_file_printf(errfile, "%s: cannot open file %s for "
+                apr_file_printf(errfile, "%s: Cannot open file %s for "
                                 "read/write access" NL, argv[0], pwfilename);
                 exit(ERR_FILEPERM);
             }
@@ -348,7 +348,7 @@ int main(int argc, const char * const argv[])
              * Check that this existing file is readable.
              */
             if (!accessible(pool, pwfilename, APR_FOPEN_READ)) {
-                apr_file_printf(errfile, "%s: cannot open file %s for "
+                apr_file_printf(errfile, "%s: Cannot open file %s for "
                                 "read access" NL, argv[0], pwfilename);
                 exit(ERR_FILEPERM);
             }
@@ -359,7 +359,7 @@ int main(int argc, const char * const argv[])
              */
             if (!(mask & APHTP_NEWFILE)) {
                 apr_file_printf(errfile,
-                        "%s: cannot modify file %s; use '-c' to create it" NL,
+                        "%s: Cannot modify file %s; use '-c' to create it" NL,
                         argv[0], pwfilename);
                 exit(ERR_FILEPERM);
             }
@@ -367,7 +367,7 @@ int main(int argc, const char * const argv[])
              * As it doesn't exist yet, verify that we can create it.
              */
             if (!accessible(pool, pwfilename, APR_FOPEN_WRITE|APR_FOPEN_CREATE)) {
-                apr_file_printf(errfile, "%s: cannot create file %s" NL,
+                apr_file_printf(errfile, "%s: Cannot create file %s" NL,
                                 argv[0], pwfilename);
                 exit(ERR_FILEPERM);
             }
@@ -399,14 +399,14 @@ int main(int argc, const char * const argv[])
          * to add or update.  Let's do it..
          */
         if (apr_temp_dir_get((const char**)&dirname, pool) != APR_SUCCESS) {
-            apr_file_printf(errfile, "%s: could not determine temp dir" NL,
+            apr_file_printf(errfile, "%s: Could not determine temp dir" NL,
                             argv[0]);
             exit(ERR_FILEPERM);
         }
         dirname = apr_psprintf(pool, "%s/%s", dirname, tn);
 
         if (apr_file_mktemp(&ftemp, dirname, 0, pool) != APR_SUCCESS) {
-            apr_file_printf(errfile, "%s: unable to create temporary file %s" NL,
+            apr_file_printf(errfile, "%s: Unable to create temporary file %s" NL,
                             argv[0], dirname);
             exit(ERR_FILEPERM);
         }
@@ -419,7 +419,7 @@ int main(int argc, const char * const argv[])
     if (existing_file && !(mask & APHTP_NEWFILE)) {
         if (apr_file_open(&fpw, pwfilename, APR_READ | APR_BUFFERED,
                           APR_OS_DEFAULT, pool) != APR_SUCCESS) {
-            apr_file_printf(errfile, "%s: unable to read file %s" NL,
+            apr_file_printf(errfile, "%s: Unable to read file %s" NL,
                             argv[0], pwfilename);
             exit(ERR_FILEPERM);
         }
@@ -513,13 +513,13 @@ int main(int argc, const char * const argv[])
         exit(0);
     }
 
-    apr_file_printf(errfile, "password for user %s" NL, user);
+    apr_file_printf(errfile, "Password for user %s" NL, user);
 
     /* The temporary file has all the data, just copy it to the new location.
      */
     if (apr_file_copy(dirname, pwfilename, APR_OS_DEFAULT, pool) !=
         APR_SUCCESS) {
-        apr_file_printf(errfile, "%s: unable to update file %s" NL,
+        apr_file_printf(errfile, "%s: Unable to update file %s" NL,
                         argv[0], pwfilename);
         exit(ERR_FILEPERM);
     }
